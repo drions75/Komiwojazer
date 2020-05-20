@@ -73,6 +73,80 @@ namespace Komiwojazer
             Console.WriteLine("===========================================================================");
 
         }
+        public class DuplicateKeyComparer<TKey>
+                   :
+                IComparer<TKey> where TKey : IComparable
+        {
+            #region IComparer<TKey> Members
+
+            public int Compare(TKey x, TKey y)
+            {
+                int result = x.CompareTo(y);
+
+                if (result == 0)
+                    return 1;   // Handle equality as beeing greater
+                else
+                    return result;
+            }
+
+            #endregion
+        }
+        int pathDistance(int[,] graph, List<int> nodeList)
+        {
+            int dist = 0;
+            for (int i = 0; i < nodeList.Count - 1; i++)
+                dist += graph[nodeList[i], nodeList[i + 1]];
+
+            return dist;
+        }
+        double heuristic()
+        {
+            return 0.5;
+        }
+        void astar(int[,] graph)
+        {
+            int bestDistance = 0;
+            int nodeAmount = NodeAmount;
+
+            int startNode = Defined.startNode;
+            List<int> nodeList = new List<int>();
+            for (int i = 0; i < NodeAmount; i++)
+            {                
+                nodeList.Add(i);
+            }
+
+            SortedList<double, List<int>> paths = new SortedList<double, List<int>>(new DuplicateKeyComparer<double>());
+
+            paths.Add(0, new List<int>() { startNode });
+
+            do
+            {
+                List<int> currentBestDistancePath = paths.First().Value;
+                paths.RemoveAt(0);
+                for (int i = 0; i < nodeAmount; i++)
+                {
+                    if (!currentBestDistancePath.Contains(nodeList[i]))
+                    {
+                        double F = pathDistance(graph, currentBestDistancePath) + 0.5/*heuristic(startNode, nodeList[i])*/;
+                        paths.Add(F, new List<int>(currentBestDistancePath) { nodeList[i] });
+                    }
+                }
+                if (paths.First().Value.Count == nodeAmount)
+                {
+                    double F = pathDistance(graph,paths.First().Value) + 0.2 /*heuristic(paths.First().Value.Last(), startNode)*/;
+                    paths.Add(F, new List<int>(paths.First().Value) { startNode });
+
+                    paths.RemoveAt(0);
+                }
+            } while(paths.First().Value.Count != nodeAmount + 1);
+
+            paths.First().Value.RemoveAt(nodeAmount);
+            bestDistance = pathDistance(graph,paths.First().Value);
+            
+            Console.WriteLine(bestDistance);
+
+
+        }
         void permutationFunc(List<int> CurrentNodeList, out List<int> newNodeList)
         {
             newNodeList = new List<int>(CurrentNodeList);
@@ -208,9 +282,9 @@ namespace Komiwojazer
             
             Komiwojazer Algorytm = new Komiwojazer();
 
-            Algorytm.nearest_neighbour(graph,Defined.startNode);
-            Algorytm.annealing(graph);
-
+            //Algorytm.nearest_neighbour(graph,Defined.startNode);
+            //Algorytm.annealing(graph);
+            Algorytm.astar(graph);
             
         }
     }
