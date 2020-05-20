@@ -7,12 +7,14 @@ using System.Threading;
 
 namespace Komiwojazer
 {
-    static class Defined
-    {
-        public const int startNode = 2;
-        public const int nodeAmount = 4;
-    }
-   
+    /*  [Sztuczna Inteligencja LAB]
+         Damian Kaniewski - 291565 - IS IIIr. 
+         Problem Komiwojażera:
+            - Algorytm Nearest Neighbour    [X]
+            - Algorytm Annealing            [X]
+            - Algorytm A*                   [ ]
+     */
+
     class Komiwojazer
     {
        
@@ -81,7 +83,6 @@ namespace Komiwojazer
             int aux = newNodeList[i1];
             newNodeList[i1] = newNodeList[i2];
             newNodeList[i2] = aux;
-
         }
         int sumDistance(int[,] graph, List<int> NodeList)
         {
@@ -93,10 +94,8 @@ namespace Komiwojazer
             distance += graph[NodeList[0], NodeList[NodeList.Count - 1]];
 
             return distance;
-        }
-        
-        
-        void annealing(int [,] graph, int[,] next_graph)
+        }           
+        void annealing(int [,] graph)
         {
             Console.WriteLine("===========================================================================");
             Console.WriteLine("            \t\t--Algorytm Annealing--");
@@ -150,7 +149,7 @@ namespace Komiwojazer
                     
                     if (iteration == 0)
                     {
-                        Console.WriteLine();
+                        
                            Console.Write("\nIteracja = " + iteration + "  \t\tKoszt = " + distance + ",\tTemperatura = " + Math.Round(temperature, 5));
                         for (int i =0;i<newNodeList.Count;i++)
                         {
@@ -183,35 +182,34 @@ namespace Komiwojazer
             Console.WriteLine("     \t\t\tNajmniejszy Koszt = " + distance);
             Console.WriteLine("===========================================================================");
         }
-             
+        static class Defined
+        {
+            public const int startNode = 2;
+            public const int nodeAmount = 4;
+        }
+
         public static void Main()
         {
             
-            //Przykładowy graf dla z 6 nodami. Poniżej Macierz Sąsiedztwa 
+            //Przykładowy graf z 6 nodami. Poniżej Macierz Sąsiedztwa 
             int[,] graph2 = new int[,] {     /*0  1  2  3  4  5*/
             /* 0  */                        { 0, 2, 3, 2, 1, 5 },
             /* 1 */                         { 2, 0, 6, 2, 5, 1 },
             /* 2  */                        { 3, 6, 0, 3, 2, 7 },
             /* 3  */                        { 2, 2, 3, 0, 5, 1 },
             /* 4  */                        { 1, 5, 2, 5, 0, 9 },
-            /* 5  */                        { 5, 1, 7, 1, 9, 0 },
-};
-
+            /* 5  */                        { 5, 1, 7, 1, 9, 0 },};
+            //Przykładowy graf z 4 nodami. Poniżej Macierz Sąsiedztwa 
             int[,] graph = new int[,] {     /*0  1  2  3  
                                   /* 0 */   { 0, 2, 3, 5},
                                   /* 1 */   { 2, 0, 6, 1},
                                   /* 2 */   { 3, 6, 0, 7},
-                                  /* 3 */   { 5, 1, 7, 0},
-
-
-                                  
-            };
-            int[,] next_graph = new int[Defined.nodeAmount, Defined.nodeAmount];
-
-            Komiwojazer t = new Komiwojazer();
+                                  /* 3 */   { 5, 1, 7, 0},};
             
-            t.nearest_neighbour(graph,Defined.startNode);
-            t.annealing(graph, next_graph);
+            Komiwojazer Algorytm = new Komiwojazer();
+
+            Algorytm.nearest_neighbour(graph,Defined.startNode);
+            Algorytm.annealing(graph);
 
             
         }
